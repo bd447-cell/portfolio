@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Duolingo Teardown — Bhavya Diwakar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #FAF8F6;
+      --ink: #1C1917;
+      --ink-soft: #57534E;
+      --ink-muted: #A8A29E;
+      --accent: #B5706A;
+      --accent-mid: #D4928C;
+      --border: rgba(28,25,23,0.09);
+      --card-bg: #FFFFFF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+
+    nav {
+      position: sticky; top: 0;
+      background: rgba(250,248,246,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 760px; margin: 0 auto; padding: 0 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; height: 56px;
+    }
+    .nav-name { font-family: 'Lora', serif; font-size: 16px; color: var(--ink); }
+    .back-link {
+      font-size: 13px; color: var(--ink-soft);
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    .wrap { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    .stat-bar {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+      border-radius: 10px; overflow: hidden; margin-bottom: 2rem;
+    }
+    .stat { background: var(--card-bg); padding: 16px 18px; text-align: center; }
+    .stat-val { font-family: 'Lora', serif; font-size: 24px; color: var(--accent); display: block; }
+    .stat-lbl { font-size: 11px; color: var(--ink-muted); margin-top: 2px; }
+
+    .hero-tag {
+      font-size: 11px; font-weight: 500; text-transform: uppercase;
+      letter-spacing: 0.09em; color: var(--accent); margin-bottom: 12px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .hero-tag::before { content: ''; width: 20px; height: 1px; background: var(--accent-mid); display: inline-block; }
+    .hero-title { font-family: 'Lora', serif; font-size: clamp(22px, 4vw, 34px); font-weight: 400; color: var(--ink); line-height: 1.25; margin-bottom: 12px; }
+    .hero-title em { font-style: italic; color: var(--accent); }
+    .hero-sub { font-size: 14px; color: var(--ink-soft); line-height: 1.7; max-width: 600px; }
+    .meta { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .meta-item { font-size: 12px; color: var(--ink-muted); background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 3px 12px; }
+    .meta-item strong { color: var(--ink-soft); }
+
+    .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+    .section { margin-bottom: 2.5rem; }
+    .section-title { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-muted); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+
+    .body-text { font-size: 14px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 14px; }
+    .body-text strong { color: var(--ink); font-weight: 500; }
+
+    .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .user-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+    .user-name { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+    .user-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 8px; }
+    .user-need { font-size: 11px; color: var(--ink-muted); font-style: italic; }
+
+    .feature-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; }
+    .feature-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .feature-badge { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .works { background: #E1F5EE; color: #085041; border: 1px solid rgba(8,80,65,0.15); }
+    .gap { background: #FFF3E0; color: #7C4A00; border: 1px solid rgba(124,74,0,0.15); }
+    .feature-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+    .feature-body { font-size: 13px; color: var(--ink-soft); line-height: 1.65; }
+
+    .proposal { background: var(--card-bg); border: 1.5px solid rgba(181,112,106,0.35); border-radius: 12px; padding: 22px 24px; margin-bottom: 14px; }
+    .proposal-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 10px; }
+    .proposal-title { font-family: 'Lora', serif; font-size: 20px; font-weight: 400; color: var(--ink); margin-bottom: 14px; line-height: 1.35; }
+    .proposal-body { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 12px; }
+    .proposal-body strong { color: var(--ink); font-weight: 500; }
+
+    .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+    .metric { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+    .metric-val { font-size: 13px; font-weight: 600; color: var(--accent); display: block; }
+    .metric-label { font-size: 10px; color: var(--ink-muted); margin-top: 3px; }
+
+    .tradeoff { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    .tradeoff-box { border-radius: 10px; padding: 14px 16px; }
+    .pro-box { background: #E8F5EE; border: 1px solid rgba(8,80,65,0.12); }
+    .con-box { background: #FFF3E0; border: 1px solid rgba(124,74,0,0.12); }
+    .tradeoff-label { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+    .pro-box .tradeoff-label { color: #085041; }
+    .con-box .tradeoff-label { color: #7C4A00; }
+    .tradeoff-item { font-size: 12px; color: var(--ink-soft); line-height: 1.55; padding: 4px 0; border-bottom: 1px solid rgba(28,25,23,0.05); }
+    .tradeoff-item:last-child { border-bottom: none; }
+
+    .tldr { background: var(--card-bg); border-left: 3px solid var(--accent-mid); border-radius: 0 10px 10px 0; padding: 18px 22px; margin-top: 2rem; }
+    .tldr-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+    .tldr-text { font-family: 'Lora', serif; font-size: 16px; font-style: italic; color: var(--ink); line-height: 1.65; }
+
+    .icon { width: 14px; height: 14px; display: inline-block; vertical-align: middle; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    @media (max-width: 600px) {
+      .user-grid { grid-template-columns: 1fr; }
+      .tradeoff { grid-template-columns: 1fr; }
+      .metric-row { grid-template-columns: 1fr; }
+      .stat-bar { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-name">Bhavya Diwakar</a>
+      <a href="index.html" class="back-link">
+        <svg class="icon" viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to portfolio
+      </a>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="hero-tag">Product Teardown · Consumer · EdTech / AI</div>
+    <h1 class="hero-title">Duolingo: The <em>Retention Machine</em> That Forgot About Learning</h1>
+    <p class="hero-sub">An analysis of how Duolingo engineered one of the most powerful engagement loops in consumer tech — and why its biggest product risk is the gap between activity and actual outcomes.</p>
+    <div class="meta">
+      <div class="meta-item"><strong>By</strong> Bhavya Diwakar</div>
+      <div class="meta-item"><strong>Focus</strong> Engagement mechanics, AI opportunity & what to build next</div>
+      <div class="meta-item"><strong>Updated</strong> May 2026</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="stat-bar">
+      <div class="stat"><span class="stat-val">113M</span><span class="stat-lbl">Monthly Active Users</span></div>
+      <div class="stat"><span class="stat-val">~50%</span><span class="stat-lbl">Revenue from subscriptions</span></div>
+      <div class="stat"><span class="stat-val">#1</span><span class="stat-lbl">Most downloaded education app globally</span></div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">What Duolingo Is</div>
+      <div class="body-text">Duolingo is a free language-learning app with a freemium subscription model (Duolingo Plus / Super / Max), serving over 113 million monthly active users across 40+ languages. Its core loop is deceptively simple: short daily lessons, a streak that resets if you miss a day, and a gamified progression system (XP, leagues, hearts) designed to make habit formation feel like a game.</div>
+      <div class="body-text">What makes Duolingo remarkable as a product isn't its pedagogy — it's its <strong>engagement engineering</strong>. The streak mechanic alone has become a cultural phenomenon. The company went public in 2021, and its 2024 pivot to an "AI-first" strategy (with Duolingo Max and the GPT-4-powered Explain My Answer and Roleplay features) signals a genuine rethink of what personalized learning at scale can look like.</div>
+      <div class="body-text"><strong>The core tension:</strong> Duolingo is extraordinarily good at getting you to open the app every day. It is considerably less good at getting you to speak a language at the end of it. That gap is both its biggest product risk and its biggest opportunity.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title">Who Actually Uses Duolingo</div>
+      <div class="body-text">Duolingo's user base is far more fragmented than its marketing suggests. Understanding the segments reveals why some features are brilliant and others feel tone-deaf.</div>
+      <div class="user-grid">
+        <div class="user-card">
+          <div class="user-name">The Casual Maintainer</div>
+          <div class="user-desc">Does 5 minutes a day mostly to keep their streak alive. Not seriously trying to learn — it's a daily ritual like checking email.</div>
+          <div class="user-need">Core need: Give me a quick win. Don't make me feel bad about myself.</div>
+        </div>
+        <div class="user-card">
+          <div class="user-name">The Serious Learner</div>
+          <div class="user-desc">Has a real goal — travel, heritage language, career. Frustrated by the slow pace and lack of depth. Often uses Duolingo alongside podcasts or tutors.</div>
+          <div class="user-need">Core need: Actually help me get to conversational. Stop recycling the same sentences.</div>
+        </div>
+        <div class="user-card">
+          <div class="user-name">The Returning Student</div>
+          <div class="user-desc">Took Spanish in high school. Wants to reactivate it. Loves the structured progression but outgrows it fast.</div>
+          <div class="user-need">Core need: Don't start me at "the apple is red." Place me correctly and go deeper.</div>
+        </div>
+        <div class="user-card">
+          <div class="user-name">The Streak Chaser</div>
+          <div class="user-desc">Has a 400-day streak. Would do anything to keep it — including gaming the easiest lessons. Streak Shields are their best friend.</div>
+          <div class="user-need">Core need: Protect my streak. Make it easy to maintain on busy days.</div>
+        </div>
+      </div>
+      <div class="body-text"><strong>The product implication:</strong> These users want fundamentally different things. Duolingo has optimized almost entirely for the Casual Maintainer and the Streak Chaser — both of whom drive DAU but don't necessarily convert to paid. The Serious Learner is the highest-value, most-underserved segment.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title">What Duolingo Gets Right</div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge works">Works well</span><span class="feature-title">The streak — a masterclass in habit engineering</span></div>
+        <div class="feature-body">The streak is perhaps the single most effective retention mechanic in consumer tech. It works because it exploits loss aversion (you don't want to lose what you've built) rather than just reward-seeking. Duolingo layers on Streak Shields, Streak Freezes, and push notifications with the precision of a behavioral economist. The result: users who feel genuine anxiety about missing a day. Whether that's healthy is a separate debate — as a product mechanism, it's ruthlessly effective.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge works">Works well</span><span class="feature-title">Duolingo Max — Roleplay & Explain My Answer</span></div>
+        <div class="feature-body">Duolingo's 2023 AI features are genuinely the right strategic bet. Roleplay lets you have an open-ended conversation with an AI character in your target language — a practice modality that previously required an expensive tutor. Explain My Answer surfaces the grammar rule behind why your answer was wrong, on demand. Both features address the Serious Learner's core frustration. The execution is still early, but the product direction is correct.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge works">Works well</span><span class="feature-title">League system & social competition</span></div>
+        <div class="feature-body">The weekly XP leagues (Bronze through Diamond) are a subtle stroke of product design. They add a competitive dimension without the high-stakes permanence of a leaderboard. Getting relegated from Diamond to Gold feels bad enough to motivate action. The social element — seeing friends' streaks, sending encouragement — turns a solo activity into a lightweight social one, particularly powerful for Gen Z users.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title">Where Duolingo Falls Short</div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge gap">Gap</span><span class="feature-title">Optimizing for activity, not outcomes</span></div>
+        <div class="feature-body">Duolingo's entire metric stack — DAU, streak length, lessons completed — measures engagement, not learning. A user can maintain a 500-day streak and still be unable to order food in their target language. The app has no concept of a "learning outcome" as a product goal. There is no moment where Duolingo says "you can now hold a 3-minute conversation" — because the product was never designed to get you there.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge gap">Gap</span><span class="feature-title">No adaptive placement for returning or advanced users</span></div>
+        <div class="feature-body">A user who studied French for three years in college has to start at "Je suis un garçon" unless they manually test out of sections — a friction-heavy process most users don't bother with. The placement logic hasn't kept pace with the rest of the product. For Duolingo's most valuable users, the onboarding experience is actively hostile to retention.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge gap">Gap</span><span class="feature-title">Speaking practice is nearly absent at the free tier</span></div>
+        <div class="feature-body">Language acquisition research is clear: speaking practice is irreplaceable. Yet the free Duolingo experience is almost entirely reading and listening. Speaking exercises exist but can be skipped with one tap — and most users do. Duolingo Max's Roleplay is paywalled, which means the users who most need to practice speaking — the free-tier majority — don't get it.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header"><span class="feature-badge gap">Gap</span><span class="feature-title">No progress toward a real-world milestone</span></div>
+        <div class="feature-body">Duolingo teaches in a vacuum. There's no connection between lessons and a real-world goal. The CEFR framework (A1–C2) exists. Duolingo roughly maps to it. But it never tells you where you are on it or what finishing a course actually gets you in terms of real-world ability. This is a massive missed opportunity for both motivation and premium upsell.</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <div class="section-title">Feature Proposal: Duolingo Missions</div>
+      <div class="proposal">
+        <div class="proposal-label">The Proposal</div>
+        <div class="proposal-title">Duolingo Missions — Goal-anchored learning paths that connect daily practice to a real-world moment</div>
+        <div class="proposal-body"><strong>The problem:</strong> Duolingo users churn not because the app is bad, but because they lose the thread between "completing a lesson" and "actually being able to speak Spanish at my trip in August." The product optimizes for daily engagement but provides no through-line to a meaningful outcome. When users don't feel progress toward something real, the streak stops feeling worth protecting.</div>
+        <div class="proposal-body"><strong>What it is:</strong> At onboarding, users declare a Mission: a real-world use case with a target date. Examples: "Have a basic conversation on my trip to Japan — leaving in 9 weeks," "Speak Spanish with my partner's family at Thanksgiving," or "Pass the DELF A2 exam in 4 months." Duolingo then generates a personalized, time-boxed learning path optimized for that specific goal. Weekly check-ins surface progress in mission-relevant terms: "You can now handle basic greetings and directions. 3 more weeks of this pace gets you to restaurant and transport scenarios."</div>
+        <div class="proposal-body"><strong>Why this works strategically:</strong> Missions create a second retention layer that doesn't depend purely on streak anxiety. They reframe the product from "daily habit app" to "goal achievement tool" — a significantly stronger value proposition for the Serious Learner segment. Missions also provide a natural upsell moment: free users get the path; Super users get AI Roleplay tuned specifically to their mission scenarios.</div>
+        <div class="metric-row">
+          <div class="metric"><span class="metric-val">↑ D30/D90 retention</span><span class="metric-label">Primary success metric</span></div>
+          <div class="metric"><span class="metric-val">↑ Super conversion</span><span class="metric-label">Revenue impact</span></div>
+          <div class="metric"><span class="metric-val">↓ Churn after streak break</span><span class="metric-label">Resilience proxy</span></div>
+        </div>
+      </div>
+      <div class="tradeoff">
+        <div class="tradeoff-box pro-box">
+          <div class="tradeoff-label">Why this works</div>
+          <div class="tradeoff-item">Addresses the #1 churn driver: "I'm not making real progress"</div>
+          <div class="tradeoff-item">Differentiates from every competitor on outcome, not just engagement</div>
+          <div class="tradeoff-item">Natural premium upsell for mission-relevant Roleplay scenarios</div>
+          <div class="tradeoff-item">Streak becomes a means to an end, not the end itself</div>
+        </div>
+        <div class="tradeoff-box con-box">
+          <div class="tradeoff-label">Risks to consider</div>
+          <div class="tradeoff-item">Missed missions create negative affect — users feel like they failed</div>
+          <div class="tradeoff-item">Personalized path generation is technically complex and costly</div>
+          <div class="tradeoff-item">Casual users may find goal-setting friction off-putting at onboarding</div>
+          <div class="tradeoff-item">Duolingo's brand is "fun and low-pressure" — missions risk feeling like homework</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="tldr">
+      <div class="tldr-label">The one-sentence takeaway</div>
+      <div class="tldr-text">Duolingo built the world's best machine for showing up — now it needs to build the machine for actually arriving somewhere.</div>
+    </div>
+  </div>
+
+</body>
+</html>
