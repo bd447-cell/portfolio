@@ -1,0 +1,331 @@
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.wrap { padding: 1rem 0 2.5rem; max-width: 720px; }
+
+.hero { margin-bottom: 2rem; }
+.hero-tag { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #B5706A; margin-bottom: 8px; }
+.hero-title { font-size: 26px; font-weight: 700; color: var(--color-text-primary); line-height: 1.25; margin-bottom: 8px; }
+.hero-sub { font-size: 14px; color: var(--color-text-secondary); line-height: 1.7; }
+.meta { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+.meta-item { font-size: 12px; color: var(--color-text-tertiary); }
+.meta-item strong { color: var(--color-text-secondary); }
+
+.divider { height: 0.5px; background: var(--color-border-tertiary); margin: 1.5rem 0; }
+.section { margin-bottom: 2rem; }
+
+.section-title {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #B5706A;
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 0.5px solid #E8D0CE;
+}
+
+.body-text { font-size: 14px; color: var(--color-text-secondary); line-height: 1.75; margin-bottom: 12px; }
+.body-text strong { color: var(--color-text-primary); font-weight: 500; }
+
+/* TL;DR */
+.tldr-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.tldr-cell { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 14px 16px; }
+.tldr-cell-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #B5706A; margin-bottom: 6px; }
+.tldr-cell-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Signal */
+.signal-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 13px 15px; margin-bottom: 8px; }
+.signal-header { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.signal-badge { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; background: #F5E8E7; color: #8A4441; border-radius: 20px; padding: 2px 9px; }
+.signal-quote { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; font-style: italic; border-left: 2px solid #E8D0CE; padding-left: 11px; }
+.signal-meta { font-size: 11px; color: var(--color-text-tertiary); margin-top: 6px; padding-left: 13px; }
+
+/* Persona */
+.persona-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 18px; margin-bottom: 10px; }
+.persona-primary { background: #FDF7F6; }
+.persona-secondary { background: var(--color-background-secondary); opacity: 0.85; }
+.persona-name { font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 2px; }
+.persona-tag { font-size: 11px; color: #B5706A; margin-bottom: 10px; }
+.persona-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.persona-block { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+.persona-block-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--color-text-tertiary); margin-bottom: 5px; }
+.persona-block-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Metrics */
+.metric-section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 7px; }
+.lbl-north { color: #2E7D52; }
+.lbl-secondary { color: #1E5BA6; }
+.lbl-guardrail { color: #9A5E0A; }
+.metric-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 6px; display: flex; gap: 12px; align-items: flex-start; }
+.metric-pill { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-top: 1px; }
+.pill-north { background: #D4F0E3; color: #1A5C38; }
+.pill-sec { background: #D6E8FF; color: #0E3A7D; }
+.pill-guard { background: #FDE8C8; color: #7A4506; }
+.metric-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+.metric-body strong { color: var(--color-text-primary); font-weight: 500; }
+.metric-group { margin-bottom: 16px; }
+
+/* Scope */
+.scope-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.scope-col { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 13px 14px; }
+.scope-in { background: #F2FAF5; }
+.scope-out { background: #FDF5F5; }
+.scope-later { background: #FEFAF0; }
+.scope-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+.scope-in .scope-label { color: #2E7D52; }
+.scope-out .scope-label { color: #9A2E2E; }
+.scope-later .scope-label { color: #9A7A0A; }
+.scope-item { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.scope-item:last-child { border-bottom: none; padding-bottom: 0; }
+.scope-note { font-size: 12px; color: var(--color-text-tertiary); font-style: italic; line-height: 1.6; }
+
+/* Features */
+.feature-card { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 14px 16px; margin-bottom: 8px; }
+.feature-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.feature-num { font-size: 11px; font-weight: 600; color: #8A4441; background: #F5E8E7; border-radius: var(--border-radius-md); padding: 2px 9px; }
+.feature-title { font-size: 13px; font-weight: 600; color: var(--color-text-primary); }
+.feature-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.65; }
+
+/* OQ */
+.oq-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 11px 13px; margin-bottom: 6px; display: flex; gap: 10px; }
+.oq-q { font-size: 13px; color: var(--color-text-tertiary); min-width: 14px; }
+.oq-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+.oq-body strong { color: var(--color-text-primary); font-weight: 500; }
+
+.decision-card { background: #FDF7F6; border: 0.5px solid #E8D0CE; border-radius: var(--border-radius-md); padding: 13px 15px; margin-bottom: 6px; }
+.decision-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #B5706A; margin-bottom: 5px; }
+.decision-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+
+.closing { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 18px 20px; margin-top: 1.5rem; }
+.closing-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #B5706A; margin-bottom: 8px; }
+.closing-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.75; font-style: italic; }
+</style>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-tag">PRD · Product Requirements Document · Consumer / Video</div>
+    <div class="hero-title">YouTube Collections: A Better Way to Save and Organize Videos</div>
+    <div class="hero-sub">A product requirements document for a first-party folder-based video organization system — addressing one of YouTube's most persistently requested and most neglected user needs.</div>
+    <div class="meta">
+      <div class="meta-item"><strong>By</strong> Bhavya Diwakar</div>
+      <div class="meta-item"><strong>Product</strong> YouTube (Google)</div>
+      <div class="meta-item"><strong>Stage</strong> v1 Scoped Proposal</div>
+      <div class="meta-item"><strong>Updated</strong> June 2026</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">TL;DR</div>
+    <div class="tldr-grid">
+      <div class="tldr-cell">
+        <div class="tldr-cell-label">The Problem</div>
+        <div class="tldr-cell-body">YouTube's Watch Later queue is a flat, unsortable list — users who save frequently can't find or act on saved videos, so the feature creates anxiety instead of reducing it.</div>
+      </div>
+      <div class="tldr-cell">
+        <div class="tldr-cell-label">The Solution</div>
+        <div class="tldr-cell-body">YouTube Collections — a lightweight folder-based system letting users create named collections, move saved videos into them, and filter by completion status.</div>
+      </div>
+      <div class="tldr-cell">
+        <div class="tldr-cell-label">Why Now</div>
+        <div class="tldr-cell-body">YouTube Shorts' rise splits user intent at the point of saving. The platform now serves two incompatible viewing modes that one flat list cannot serve well.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">Problem Statement</div>
+    <div class="body-text">YouTube's Watch Later playlist is the platform's primary saving mechanism — but it scales terribly. Once a user has saved more than ~30 videos, the list becomes effectively unusable: there's no way to group by topic, filter by watched/unwatched, or distinguish between "watch tonight" and "reference later." The result is a queue that grows faster than it shrinks, producing a cognitive backlog users eventually abandon entirely.</div>
+    <div class="body-text">This isn't a niche complaint. It's one of the most upvoted feature requests in YouTube's feedback forums and has been surfaced consistently on Reddit for over five years. Watch Later exists specifically to reduce friction around intent-to-watch — but at scale it creates more friction than it resolves.</div>
+    <div class="body-text"><strong>The core failure:</strong> Watch Later was designed for one use case (save a video to watch tonight) but users have adopted it for four distinct jobs: saving tutorials, queuing entertainment, bookmarking reference content, and archiving videos to share. One flat list cannot serve four different jobs.</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">User Signal</div>
+    <div class="signal-card">
+      <div class="signal-header"><span class="signal-badge">Reddit</span></div>
+      <div class="signal-quote">"My Watch Later has 800 videos in it. I have no idea what's in there anymore. I basically treat it as a graveyard at this point."</div>
+      <div class="signal-meta">r/youtube · 4.2k upvotes · 2024</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header"><span class="signal-badge">Reddit</span></div>
+      <div class="signal-quote">"I want a way to make playlists that are private and that I can organize my Watch Later into — like folders. I've been asking for this for 7 years."</div>
+      <div class="signal-meta">r/youtube · 2.8k upvotes · 2023</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header"><span class="signal-badge">Help Forum</span></div>
+      <div class="signal-quote">"Sort watch later by topic or let me make sub-playlists. This is the #1 thing that would change how I use YouTube daily."</div>
+      <div class="signal-meta">YouTube Help Community · Most-upvoted open feature request in "Watch Later" category</div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-header"><span class="signal-badge">Behavioral</span></div>
+      <div class="signal-quote">Users who save more than 50 videos stop using Watch Later within 60 days. Third-party Watch Later sorting extensions have 200k+ active installs — a direct signal of an unmet first-party need.</div>
+      <div class="signal-meta">Inferred from browser extension install counts (SortTube, YoutubeWatchLater extensions)</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">User Persona</div>
+    <div class="body-text">Personas defined by behavior, not demographics.</div>
+    <div class="persona-card persona-primary">
+      <div class="persona-name">The Intentional Saver</div>
+      <div class="persona-tag">Primary · The user this feature is built for</div>
+      <div class="body-text" style="margin-bottom: 0;">Uses YouTube as a learning and reference tool. Saves videos with explicit intent — tutorials to follow, talks to revisit, videos to share. Saves 5–20 videos/week across multiple topic areas. Maintains private playlists as a workaround, but the playlist UX is too heavy for quick-saving behavior.</div>
+      <div class="persona-row">
+        <div class="persona-block">
+          <div class="persona-block-label">Job to be Done</div>
+          <div class="persona-block-body">When I find a valuable video I can't watch now, I want to save it to a meaningful place so I can reliably find and act on it later — without wading through unrelated content.</div>
+        </div>
+        <div class="persona-block">
+          <div class="persona-block-label">Current Workaround</div>
+          <div class="persona-block-body">Maintains 4–8 manual private playlists ("coding," "design," "watch this weekend") — but the save flow doesn't support this, so they abandon the queue or spend time manually reorganizing.</div>
+        </div>
+      </div>
+    </div>
+    <div class="persona-card persona-secondary">
+      <div class="persona-name">The Casual Queue-Builder</div>
+      <div class="persona-tag">Secondary · Benefits from this feature but is not the primary design target</div>
+      <div class="body-text" style="margin-bottom: 0;">Uses Watch Later as a simple "not now" queue. Saves entertainment videos, watches them the same week, repeats. Queue stays manageable. Benefits from completion filtering but doesn't need multi-folder organization. <strong>The core organizing logic must not add friction to their simple use case.</strong></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">Success Metrics</div>
+    <div class="body-text">Defined before the solution — these constrain what we build, not just measure it.</div>
+    <div class="metric-group">
+      <div class="metric-section-label lbl-north">★ North Star</div>
+      <div class="metric-card">
+        <span class="metric-pill pill-north">North Star</span>
+        <div class="metric-body"><strong>Watch Later completion rate at 30 days.</strong> % of saved videos a user watches within 30 days of saving. Target: +15% within 6 months of launch among users with 30+ saved items. Directly measures whether the feature resolves the graveyard problem.</div>
+      </div>
+    </div>
+    <div class="metric-group">
+      <div class="metric-section-label lbl-secondary">Secondary</div>
+      <div class="metric-card">
+        <span class="metric-pill pill-sec">Secondary</span>
+        <div class="metric-body"><strong>Collection creation rate.</strong> % of eligible users (≥15 saved videos) who create at least one Collection within 30 days of feature availability.</div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-pill pill-sec">Secondary</span>
+        <div class="metric-body"><strong>Save-to-collection rate.</strong> % of save actions that add a video directly to a named Collection (vs. defaulting to Watch Later). Increasing this over time is the long-term goal.</div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-pill pill-sec">Secondary</span>
+        <div class="metric-body"><strong>Cross-session return rate to Collections.</strong> % of users who open a Collection in a session starting from Library or Home — indicating Collections are becoming a real entry point, not a buried feature.</div>
+      </div>
+    </div>
+    <div class="metric-group">
+      <div class="metric-section-label lbl-guardrail">⚠ Guardrail</div>
+      <div class="metric-card">
+        <span class="metric-pill pill-guard">Guardrail</span>
+        <div class="metric-body"><strong>Save completion rate must not drop.</strong> Current Watch Later save flow is one tap. If Collection assignment adds friction that causes users to abandon the save, we've made the product worse. Must not decline by more than 2% vs. control.</div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-pill pill-guard">Guardrail</span>
+        <div class="metric-body"><strong>Watch time on saved content must not decline.</strong> If Collections cause users to over-organize rather than watch, we've built a procrastination tool. Watch time accessed through Library must be flat or positive vs. pre-launch.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">Scope</div>
+    <div class="scope-grid">
+      <div class="scope-col scope-in">
+        <div class="scope-label">In — v1</div>
+        <div class="scope-item">Create named Collections (up to 20)</div>
+        <div class="scope-item">Move saved videos from Watch Later into a Collection</div>
+        <div class="scope-item">Save directly to a Collection at point of save</div>
+        <div class="scope-item">Filter Watch Later by Watched / Unwatched</div>
+        <div class="scope-item">Collections in Library, private by default</div>
+      </div>
+      <div class="scope-col scope-out">
+        <div class="scope-label">Out — not v1</div>
+        <div class="scope-item">Collaborative or shared Collections</div>
+        <div class="scope-item">AI-suggested auto-categorization</div>
+        <div class="scope-item">Public or link-shareable Collections</div>
+        <div class="scope-item">Cross-device custom sort order sync</div>
+        <div class="scope-item">Nested sub-folders</div>
+      </div>
+      <div class="scope-col scope-later">
+        <div class="scope-label">Later — v2+</div>
+        <div class="scope-item">AI-suggested Collection assignment on save</div>
+        <div class="scope-item">Reminders for long-saved unwatched videos</div>
+        <div class="scope-item">Shared Collections for households/groups</div>
+        <div class="scope-item">Export / import Collections</div>
+      </div>
+    </div>
+    <div class="scope-note">Why this scope: v1 solves the core organization problem without requiring AI infrastructure or social graph work. Shared Collections triple build time. Auto-categorization is v2 only — we need real usage data on how users self-organize before we try to predict it.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">The Solution</div>
+    <div class="body-text"><strong>YouTube Collections</strong> is a lightweight folder-based organization layer sitting between Watch Later (quick save) and Playlists (curated, potentially public). Designed to match the mental model users already have — they think in topics — without playlist management overhead.</div>
+    <div class="feature-card">
+      <div class="feature-header"><span class="feature-num">01</span><span class="feature-title">Collections in Library</span></div>
+      <div class="feature-body">A "Collections" row appears in the Library tab, above Watch Later. Each Collection shows a thumbnail grid, video count, and last-added timestamp. Creating one is one tap — name it, done. No description, no cover photo, no playlist overhead. The mental model is a folder, not a playlist.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header"><span class="feature-num">02</span><span class="feature-title">Save flow with Collection assignment</span></div>
+      <div class="feature-body">When a user taps "Save," the bottom sheet shows Watch Later (default, unchanged) plus their top 3 Collections as quick-add options and a "New Collection" option. One additional tap assigns a video. If ignored, behavior is identical to today — zero added friction for the casual saver.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header"><span class="feature-num">03</span><span class="feature-title">Watch Later completion filter</span></div>
+      <div class="feature-body">A Watched / Unwatched toggle at the top of Watch Later, scoped to videos YouTube knows have been completed (≥80% viewed). No ML required. This alone significantly reduces the perceived backlog for long-time users and gives them a clear action: clear your watched videos.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-header"><span class="feature-num">04</span><span class="feature-title">Bulk move from Watch Later</span></div>
+      <div class="feature-body">An "Organize" mode lets users multi-select videos and move them to a Collection in one action. This is the one-time onboarding moment that makes the feature immediately valuable to existing heavy users — and gives us behavioral data to inform v2 auto-categorization.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <div class="section-title">Edge Cases &amp; Open Questions</div>
+    <div class="oq-card">
+      <div class="oq-q">?</div>
+      <div class="oq-body"><strong>What happens to existing Watch Later when Collections launch?</strong> No migration. Watch Later remains as-is. Collections is additive, not a replacement. Forcing migration creates confusion and support load.</div>
+    </div>
+    <div class="oq-card">
+      <div class="oq-q">?</div>
+      <div class="oq-body"><strong>Can a video be in both Watch Later and a Collection?</strong> Yes — separate states. Watch Later = "save for later." Collections = "file in topic." A video can exist in both without duplication on the watch side.</div>
+    </div>
+    <div class="oq-card">
+      <div class="oq-q">?</div>
+      <div class="oq-body"><strong>What if a video is deleted by the creator after being saved?</strong> Same behavior as Watch Later today — shows as unavailable. Existing known state; no need to solve in v1.</div>
+    </div>
+    <div class="oq-card">
+      <div class="oq-q">?</div>
+      <div class="oq-body"><strong>How does this interact with Premium offline downloads?</strong> Collections do not support offline download in v1 — v2 dependency on the Premium team's roadmap. Needs a decision before launch to avoid user confusion.</div>
+    </div>
+    <div class="oq-card">
+      <div class="oq-q">?</div>
+      <div class="oq-body"><strong>20 Collection limit — right number?</strong> Chosen to prevent storage and UI sprawl, not based on research. Validate through beta: if >10% of heavy users hit the cap in the first 90 days, it's too low.</div>
+    </div>
+    <div style="margin-top: 12px;">
+      <div class="decision-card">
+        <div class="decision-label">Key Decision Made</div>
+        <div class="decision-body">Collections are private-only in v1. Sharing infrastructure doubles scope and introduces content moderation concerns. The core user problem is personal organization, not sharing. Ship private-first, validate retention, revisit sharing in v2.</div>
+      </div>
+      <div class="decision-card">
+        <div class="decision-label">Key Decision Made</div>
+        <div class="decision-body">No AI auto-categorization in v1. No ground truth for how users want to categorize their saves. Building AI suggestions before real Collection data is building on sand. Ship the manual tool first, mine usage patterns, then train on it.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="closing">
+    <div class="closing-label">The one-sentence PM rationale</div>
+    <div class="closing-text">YouTube has already earned the save — it just hasn't built a place to put it; Collections turns a feature that produces anxiety into one that produces trust, without touching the recommendation engine, the monetization model, or anything that matters to the platform's revenue logic.</div>
+  </div>
+</div>
