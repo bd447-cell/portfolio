@@ -9,16 +9,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --cream: #FAF8F6;
-      --ink: #1C1917;
-      --ink-soft: #57534E;
-      --ink-muted: #A8A29E;
-      --accent: #B5706A;
-      --accent-mid: #D4928C;
-      --accent-light: #F5ECEB;
-      --border: rgba(28,25,23,0.09);
-      --border-mid: rgba(28,25,23,0.15);
-      --card-bg: #FFFFFF;
+      --bg: #1A1410;
+      --bg-card: #221C17;
+      --bg-card2: #2A221C;
+      --ink: #F2EDE8;
+      --ink-soft: #B8A99A;
+      --ink-muted: #7A6A5E;
+      --accent: #C4856A;
+      --accent-mid: #D4998A;
+      --accent-light: rgba(196,133,106,0.12);
+      --border: rgba(242,237,232,0.07);
+      --border-mid: rgba(242,237,232,0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,19 +27,42 @@
 
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
+      background: var(--bg);
       color: var(--ink);
       line-height: 1.6;
+      cursor: none;
     }
 
     a { color: inherit; text-decoration: none; }
 
-    .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+    /* CUSTOM CURSOR */
+    .cursor {
+      position: fixed;
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px; height: 36px;
+      border: 1px solid rgba(196,133,106,0.4);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease, width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+    }
+    .cursor.hovering { width: 16px; height: 16px; }
+    .cursor-ring.hovering { width: 48px; height: 48px; border-color: rgba(196,133,106,0.7); }
 
     /* NAV */
     nav {
       position: sticky; top: 0;
-      background: rgba(250,248,246,0.92);
+      background: rgba(26,20,16,0.92);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
@@ -49,330 +73,297 @@
       display: flex; align-items: center; justify-content: space-between; height: 56px;
     }
     .nav-name { font-family: 'Lora', serif; font-size: 16px; color: var(--ink); }
-    .nav-links { display: flex; gap: 24px; }
-    .nav-link { font-size: 13px; color: var(--ink-soft); transition: color 0.15s; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-link { font-size: 13px; color: var(--ink-muted); transition: color 0.15s; }
     .nav-link:hover { color: var(--accent); }
-
-    /* SECTION WRAPPER */
-    .section {
-      padding: 5rem 0;
-      position: relative;
+    .nav-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--ink-muted);
+      background: var(--bg-card); border: 1px solid var(--border-mid);
+      border-radius: 20px; padding: 4px 12px;
+    }
+    .status-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #5AA87A;
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
     }
 
-    .section + .section {
-      border-top: 1px solid var(--border);
+    .container { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* FADE IN ON SCROLL */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
-    .section-break {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 3rem;
-    }
+    /* SECTIONS */
+    .section { padding: 5rem 0; border-top: 1px solid var(--border); }
 
-    .section-break-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--accent-mid);
-      flex-shrink: 0;
-    }
-
-    .section-header {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-    .section-title {
-      font-family: 'Lora', serif;
-      font-size: 22px; font-weight: 400;
-      color: var(--ink); white-space: nowrap;
-    }
+    .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 28px; }
+    .section-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 400; color: var(--ink); white-space: nowrap; }
     .section-line { flex: 1; height: 1px; background: var(--border); }
     .section-count { font-size: 12px; color: var(--ink-muted); }
 
     /* HERO */
+    .hero { padding: 4rem 0 5rem; }
+
     .hero-greeting {
       display: inline-flex; align-items: center; gap: 8px;
       font-size: 11px; font-weight: 500; letter-spacing: 0.09em;
       text-transform: uppercase; color: var(--accent); margin-bottom: 20px;
     }
-    .hero-greeting::before {
-      content: ''; width: 20px; height: 1px;
-      background: var(--accent-mid); display: inline-block;
-    }
+    .hero-greeting::before { content: ''; width: 20px; height: 1px; background: var(--accent); display: inline-block; }
+
     .hero-headline {
       font-family: 'Lora', serif;
       font-size: clamp(30px, 5vw, 48px); font-weight: 400;
       line-height: 1.2; color: var(--ink);
       margin-bottom: 22px; max-width: 580px;
+      min-height: 2.5em;
     }
     .hero-headline em { font-style: italic; color: var(--accent); }
-    .hero-bio {
-      font-size: 15px; color: var(--ink-soft);
-      line-height: 1.75; max-width: 520px; margin-bottom: 28px;
+    .hero-headline .word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
+    .hero-headline .word.show { opacity: 1; transform: translateY(0); }
+
+    .hero-bio { font-size: 15px; color: var(--ink-soft); line-height: 1.75; max-width: 520px; margin-bottom: 28px; }
+
+    .hero-currently {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--ink-muted); margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+    .currently-label {
+      font-size: 11px; font-weight: 500; letter-spacing: 0.07em;
+      text-transform: uppercase; color: var(--ink-muted);
+    }
+    .currently-sep { color: var(--border-mid); }
+    .currently-item { color: var(--ink-soft); }
+
     .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
-    .tag {
-      font-size: 12px; color: var(--ink-soft);
-      border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px;
-    }
+    .tag { font-size: 12px; color: var(--ink-muted); border: 1px solid var(--border-mid); border-radius: 20px; padding: 5px 14px; }
+
     .hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; }
 
     .btn-primary {
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-      background: var(--ink); color: #FAF8F6; border: none;
-      border-radius: 6px; padding: 10px 22px; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 6px;
-      transition: background 0.15s;
+      background: var(--accent); color: #1A1410; border: none;
+      border-radius: 6px; padding: 10px 22px; cursor: none;
+      display: inline-flex; align-items: center; gap: 6px; transition: opacity 0.15s, transform 0.15s;
     }
-    .btn-primary:hover { background: var(--accent); }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
 
     .btn-secondary {
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-      background: transparent; color: var(--ink);
-      border: 1px solid var(--border); border-radius: 6px;
-      padding: 10px 22px; cursor: pointer;
+      background: transparent; color: var(--ink-soft);
+      border: 1px solid var(--border-mid); border-radius: 6px;
+      padding: 10px 22px; cursor: none;
       display: inline-flex; align-items: center; gap: 6px;
-      transition: border-color 0.15s, color 0.15s;
+      transition: border-color 0.15s, color 0.15s, transform 0.15s;
     }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
 
-    /* FILTER TABS */
+    /* FILTER */
     .filter-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
     .filter-btn {
       font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
       padding: 7px 16px; border-radius: 20px;
       border: 1px solid var(--border-mid);
-      background: var(--card-bg); color: var(--ink-soft);
-      cursor: pointer; transition: all 0.15s; letter-spacing: 0.01em;
+      background: transparent; color: var(--ink-muted);
+      cursor: none; transition: all 0.15s;
     }
-    .filter-btn:hover { border-color: var(--accent-mid); color: var(--accent); }
-    .filter-btn.active { background: var(--ink); color: #FAF8F6; border-color: var(--ink); }
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); color: #1A1410; border-color: var(--accent); }
 
     .count-line { font-size: 12px; color: var(--ink-muted); margin-bottom: 20px; }
 
     /* FEATURED CARD */
     .featured-card {
-      background: var(--card-bg); border: 1px solid var(--border);
+      background: var(--bg-card); border: 1px solid var(--border-mid);
       border-radius: 14px; padding: 28px 30px; margin-bottom: 12px;
-      position: relative; overflow: hidden; cursor: pointer;
-      transition: border-color 0.2s, transform 0.2s;
-      display: block;
+      position: relative; overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s; display: block;
     }
     .featured-card::after {
-      content: ''; position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
       background: var(--accent); border-radius: 14px 14px 0 0;
     }
-    .featured-card:hover { border-color: rgba(181,112,106,0.35); transform: translateY(-2px); }
+    .featured-card:hover { border-color: rgba(196,133,106,0.4); transform: translateY(-2px) rotate(0.3deg); }
 
     .featured-label {
       font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
       text-transform: uppercase; color: var(--accent);
       margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
     }
-    .featured-label::before {
-      content: ''; width: 6px; height: 6px;
-      border-radius: 50%; background: var(--accent);
-    }
+    .featured-label::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
     .featured-inner { display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: start; }
+
     .featured-title {
       font-family: 'Lora', serif; font-size: 20px; font-weight: 400;
       color: var(--ink); line-height: 1.3; margin-bottom: 10px;
     }
     .featured-title em { font-style: italic; color: var(--accent); }
-    .featured-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 16px; max-width: 520px; }
-    .featured-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
 
-    .featured-cta {
-      font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500;
-      color: var(--ink); background: transparent;
-      border: 1px solid var(--border); border-radius: 6px;
-      padding: 7px 14px; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 6px;
-      transition: border-color 0.15s, color 0.15s; text-decoration: none;
+    .featured-pov {
+      font-size: 13px; color: var(--accent-mid); font-style: italic;
+      line-height: 1.65; margin-bottom: 12px;
+      padding-left: 12px; border-left: 2px solid var(--accent-light);
     }
-    .featured-cta:hover { border-color: var(--accent); color: var(--accent); }
+
+    .featured-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 16px; max-width: 520px; }
 
     .featured-stat-col { display: flex; flex-direction: column; gap: 10px; min-width: 130px; }
-    .stat-box {
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 10px; padding: 12px 14px; text-align: center;
-    }
+    .stat-box { background: var(--bg-card2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; text-align: center; }
     .stat-val { font-family: 'Lora', serif; font-size: 18px; color: var(--accent); display: block; margin-bottom: 2px; }
     .stat-lbl { font-size: 10px; color: var(--ink-muted); line-height: 1.4; }
 
-    /* WORK CARDS GRID */
-    .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    /* PILLS */
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .pill { font-size: 11px; color: var(--ink-muted); background: var(--bg-card2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 9px; }
+    .pill-live {
+      font-size: 11px; font-weight: 500; color: #5AA87A;
+      background: rgba(90,168,122,0.1); border: 1px solid rgba(90,168,122,0.25);
+      border-radius: 4px; padding: 3px 9px;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .pill-live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #5AA87A; }
 
+    .cta-link {
+      font-size: 12px; font-weight: 500; color: var(--ink-soft);
+      background: var(--bg-card2); border: 1px solid var(--border-mid);
+      border-radius: 6px; padding: 7px 14px;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .cta-link:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* WORK GRID */
+    .work-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .work-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 18px 20px; cursor: pointer;
-      position: relative; overflow: hidden; transition: all 0.2s;
-      display: block;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 18px 20px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s; display: block;
     }
     .work-card::before {
-      content: ''; position: absolute;
-      left: 0; top: 0; bottom: 0; width: 3px;
-      background: var(--accent-mid); opacity: 0; transition: opacity 0.15s;
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--accent); opacity: 0; transition: opacity 0.15s;
     }
-    .work-card:hover { border-color: rgba(181,112,106,0.3); transform: translateY(-1px); }
+    .work-card:hover { border-color: rgba(196,133,106,0.3); transform: translateY(-2px) rotate(-0.3deg); }
     .work-card:hover::before { opacity: 1; }
-    .work-card.dimmed { opacity: 0.3; transform: scale(0.98); pointer-events: none; }
+    .work-card.dimmed { opacity: 0.25; transform: scale(0.98); pointer-events: none; }
 
-    .work-type {
-      font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 6px;
-    }
-    .work-title {
-      font-family: 'Lora', serif; font-size: 14px; font-weight: 400;
-      color: var(--ink); line-height: 1.35; margin-bottom: 8px; padding-right: 20px;
-    }
-    .work-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 12px; }
-    .work-pills { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 12px; }
-
-    .pill {
-      font-size: 11px; color: var(--ink-soft);
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 4px; padding: 3px 9px;
-    }
-    .pill-live {
-      font-size: 11px; font-weight: 500; color: #2D6A4F;
-      background: #E8F5EE; border: 1px solid rgba(45,106,79,0.2);
-      border-radius: 4px; padding: 3px 9px;
-      display: inline-flex; align-items: center; gap: 4px;
-    }
-    .pill-live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #2D6A4F; }
-
-    .work-link {
-      font-size: 11px; color: var(--ink-soft);
-      background: var(--cream); border: 1px solid var(--border);
-      border-radius: 5px; padding: 4px 10px;
-      display: inline-flex; align-items: center; gap: 4px;
-      text-decoration: none; transition: border-color 0.15s, color 0.15s;
-    }
-    .work-link:hover { border-color: var(--accent); color: var(--accent); }
-
-    .work-arrow {
-      font-size: 14px; color: var(--ink-muted);
-      position: absolute; top: 18px; right: 18px;
-      transition: color 0.15s, transform 0.15s;
-    }
+    .work-type { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+    .work-title { font-family: 'Lora', serif; font-size: 14px; font-weight: 400; color: var(--ink); line-height: 1.35; margin-bottom: 8px; padding-right: 20px; }
+    .work-pov { font-size: 12px; color: var(--accent-mid); font-style: italic; line-height: 1.55; margin-bottom: 10px; }
+    .work-arrow { font-size: 14px; color: var(--ink-muted); position: absolute; top: 18px; right: 18px; transition: color 0.15s, transform 0.15s; }
     .work-card:hover .work-arrow { color: var(--accent); transform: translate(2px, -2px); }
 
     /* EXPERIENCE */
     .exp-item {
       display: grid; grid-template-columns: 130px 1fr;
-      gap: 0 24px; padding: 20px 0;
-      border-bottom: 1px solid var(--border);
+      gap: 0 24px; padding: 20px 0; border-bottom: 1px solid var(--border);
     }
     .exp-item:first-of-type { border-top: 1px solid var(--border); }
     .exp-date { font-size: 11px; color: var(--ink-muted); padding-top: 3px; line-height: 1.6; }
     .exp-role { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
     .exp-org { font-size: 13px; color: var(--accent); margin-bottom: 8px; }
     .exp-bullets { list-style: none; }
-    .exp-bullets li {
-      font-size: 12.5px; color: var(--ink-soft);
-      line-height: 1.65; padding: 3px 0 3px 14px; position: relative;
-    }
-    .exp-bullets li::before { content: '–'; position: absolute; left: 0; color: var(--accent-mid); }
+    .exp-bullets li { font-size: 12.5px; color: var(--ink-soft); line-height: 1.65; padding: 3px 0 3px 14px; position: relative; }
+    .exp-bullets li::before { content: '–'; position: absolute; left: 0; color: var(--ink-muted); }
 
     /* ABOUT */
     .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .about-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 18px 20px;
-    }
-    .about-card-label {
-      font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px;
-    }
+    .about-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; transition: border-color 0.2s, transform 0.2s; }
+    .about-card:hover { border-color: var(--border-mid); transform: translateY(-1px); }
+    .about-card-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
     .about-card-content { font-size: 13px; color: var(--ink-soft); line-height: 1.65; }
     .about-card-content strong { color: var(--ink); font-weight: 500; display: block; margin-bottom: 3px; }
 
     /* CONTACT */
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
-
     .contact-intro { font-size: 14px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 24px; }
-
     .contact-links { display: flex; flex-direction: column; gap: 10px; }
-
     .contact-btn {
       font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink-soft);
-      background: var(--card-bg); border: 1px solid var(--border);
+      background: var(--bg-card); border: 1px solid var(--border);
       border-radius: 8px; padding: 11px 16px;
       display: inline-flex; align-items: center; gap: 10px;
-      transition: border-color 0.15s, color 0.15s; text-decoration: none;
+      transition: border-color 0.15s, color 0.15s, transform 0.15s;
     }
-    .contact-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .contact-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateX(3px); }
 
-    /* CONTACT FORM */
+    /* FORM */
     .contact-form { display: flex; flex-direction: column; gap: 12px; }
-
     .form-group { display: flex; flex-direction: column; gap: 6px; }
-
-    .form-label {
-      font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
-      text-transform: uppercase; color: var(--ink-muted);
-    }
-
+    .form-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); }
     .form-input, .form-textarea {
       font-family: 'DM Sans', sans-serif; font-size: 13px;
-      color: var(--ink); background: var(--card-bg);
-      border: 1px solid var(--border); border-radius: 8px;
-      padding: 10px 14px; outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
+      color: var(--ink); background: var(--bg-card);
+      border: 1px solid var(--border-mid); border-radius: 8px;
+      padding: 10px 14px; outline: none; transition: border-color 0.15s; width: 100%;
     }
-    .form-input:focus, .form-textarea:focus { border-color: var(--accent-mid); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--ink-muted); }
+    .form-input:focus, .form-textarea:focus { border-color: var(--accent); }
     .form-textarea { resize: vertical; min-height: 110px; line-height: 1.6; }
-
     .form-submit {
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-      background: var(--ink); color: #FAF8F6; border: none;
-      border-radius: 6px; padding: 11px 22px; cursor: pointer;
+      background: var(--accent); color: #1A1410; border: none;
+      border-radius: 6px; padding: 11px 22px; cursor: none;
       display: inline-flex; align-items: center; gap: 8px;
-      transition: background 0.15s; align-self: flex-start;
+      transition: opacity 0.15s, transform 0.15s; align-self: flex-start;
     }
-    .form-submit:hover { background: var(--accent); }
-    .form-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-
+    .form-submit:hover { opacity: 0.85; transform: translateY(-1px); }
+    .form-submit:disabled { opacity: 0.5; cursor: not-allowed; }
     .form-success {
-      display: none; background: #E8F5EE;
-      border: 1px solid rgba(45,106,79,0.2);
+      display: none; background: rgba(90,168,122,0.1);
+      border: 1px solid rgba(90,168,122,0.25);
       border-radius: 8px; padding: 14px 16px;
-      font-size: 13px; color: #2D6A4F;
+      font-size: 13px; color: #5AA87A;
       align-items: center; gap: 8px;
     }
 
     /* FOOTER */
-    footer { border-top: 1px solid var(--border); padding: 2rem 0; }
+    footer { border-top: 1px solid var(--border); padding: 2rem 0; margin-top: 2rem; }
     .footer-inner {
       max-width: 800px; margin: 0 auto; padding: 0 1.5rem;
       display: flex; justify-content: space-between; align-items: center;
       font-size: 12px; color: var(--ink-muted);
     }
 
-    /* SVG ICONS */
-    .icon {
-      width: 15px; height: 15px; display: inline-block;
-      vertical-align: middle; stroke: currentColor; fill: none;
-      stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
-    }
+    .icon { width: 15px; height: 15px; display: inline-block; vertical-align: middle; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
-    /* RESPONSIVE */
     @media (max-width: 620px) {
       .about-grid, .work-grid, .contact-grid { grid-template-columns: 1fr; }
       .featured-inner { grid-template-columns: 1fr; }
       .featured-stat-col { flex-direction: row; min-width: 0; }
       .exp-item { grid-template-columns: 1fr; gap: 4px; }
       .exp-date { padding-top: 0; margin-bottom: 6px; }
-      .nav-links { gap: 14px; }
+      .nav-links { gap: 12px; }
+      .nav-status { display: none; }
+      body { cursor: auto; }
+      .cursor, .cursor-ring { display: none; }
     }
   </style>
 </head>
 <body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
 
   <nav>
     <div class="nav-inner">
@@ -382,6 +373,10 @@
         <a href="#experience" class="nav-link">Experience</a>
         <a href="#about" class="nav-link">About</a>
         <a href="#contact" class="nav-link">Contact</a>
+        <span class="nav-status">
+          <span class="status-dot"></span>
+          Open to Summer 2027
+        </span>
       </div>
     </div>
   </nav>
@@ -390,19 +385,29 @@
     <div class="container">
 
       <!-- HERO -->
-      <section class="section" style="border-top: none;">
+      <section class="hero">
         <div class="hero-greeting">Product Manager in Training</div>
-        <h1 class="hero-headline">I build things and <em>think deeply</em> about why they work</h1>
-        <p class="hero-bio">Cornell Information Science + Economics student (Class of 2028) with a focus on consumer products, fintech, and AI. Tata Scholar. I care about understanding users, finding the right problem, and building things that actually ship.</p>
-        <div class="hero-tags">
-          <span class="tag">Consumer / B2C</span>
+        <h1 class="hero-headline" id="hero-headline"></h1>
+        <p class="hero-bio fade-in">Cornell Information Science + Economics, Class of 2028. Tata Scholar. Laidlaw Scholar. I care about underserved users, finding the right problem, and building things that actually ship.</p>
+
+        <div class="hero-currently fade-in">
+          <span class="currently-label">Currently</span>
+          <span class="currently-sep">·</span>
+          <span class="currently-item">Ithaca, NY</span>
+          <span class="currently-sep">·</span>
+          <span class="currently-item">Building my PM portfolio</span>
+          <span class="currently-sep">·</span>
+          <span class="currently-item">Laidlaw research in Japan this summer</span>
+        </div>
+
+        <div class="hero-tags fade-in">
           <span class="tag">Fintech</span>
           <span class="tag">AI Products</span>
           <span class="tag">Cornell '28</span>
           <span class="tag">Tata Scholar</span>
           <span class="tag">Laidlaw Scholar</span>
         </div>
-        <div class="hero-ctas">
+        <div class="hero-ctas fade-in">
           <a href="#work" class="btn-primary">
             <svg class="icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
             View my work
@@ -416,12 +421,12 @@
 
       <!-- WORK -->
       <section class="section" id="work">
-        <div class="section-header">
+        <div class="section-header fade-in">
           <h2 class="section-title">Work</h2>
           <div class="section-line"></div>
         </div>
 
-        <div class="filter-row">
+        <div class="filter-row fade-in">
           <button class="filter-btn active" onclick="filterWork('all', this)">All projects</button>
           <button class="filter-btn" onclick="filterWork('fintech', this)">Fintech</button>
           <button class="filter-btn" onclick="filterWork('consumer-ai', this)">Consumer & AI</button>
@@ -429,20 +434,45 @@
         </div>
         <div class="count-line" id="count-line">4 projects</div>
 
-        <!-- FEATURED -->
-        <a href="chime.html" class="featured-card" id="featured-chime" style="display:none">
+        <a href="big-red-happenings.html" class="featured-card fade-in" id="featured-brh">
+          <div class="featured-label">Featured project</div>
+          <div class="featured-inner">
+            <div>
+              <div class="featured-title">Big Red Happenings — <em>Campus Event Discovery</em> for Cornell Students</div>
+              <div class="featured-pov">"I built this after missing Boris Johnson speak at Cornell because I never knew he was coming — and realized the problem was structural, not just bad luck."</div>
+              <div class="featured-desc">A mobile-first React web app for discovering Cornell club events. Deployed live on Vercel with a color-coded feed, category filters, RSVP + Google Cal integration, and a club rep submission form.</div>
+              <div class="pills">
+                <span class="pill-live">Live</span>
+                <span class="pill">React</span>
+                <span class="pill">Vercel</span>
+                <span class="pill">Mobile-first</span>
+                <span class="pill">Supabase (in progress)</span>
+              </div>
+              <span class="cta-link">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                View case study
+              </span>
+            </div>
+            <div class="featured-stat-col">
+              <div class="stat-box"><span class="stat-val">1,000+</span><span class="stat-lbl">clubs on Cornell's campus</span></div>
+              <div class="stat-box"><span class="stat-val">3</span><span class="stat-lbl">screens shipped</span></div>
+              <div class="stat-box"><span class="stat-val">Live</span><span class="stat-lbl">deployed on Vercel</span></div>
+            </div>
+          </div>
+        </a>
+
+        <a href="chime.html" class="featured-card fade-in" id="featured-chime" style="display:none">
           <div class="featured-label">Featured project</div>
           <div class="featured-inner">
             <div>
               <div class="featured-title">Chime: Banking for People <em>Traditional Banks Left Behind</em></div>
+              <div class="featured-pov">"I built this because I wanted to understand how a product with no premium features still commands fierce user loyalty — and what that says about who traditional banks failed."</div>
               <div class="featured-desc">A deep dive into Chime's product strategy — what it gets right, where its biggest gaps are, and a feature proposal for Chime Coach: an AI-powered financial guidance system for paycheck-to-paycheck users.</div>
-              <div class="featured-pills">
-                <span class="pill">Fintech</span>
-                <span class="pill">Neobanking</span>
-                <span class="pill">Feature Proposal</span>
-                <span class="pill">User Segmentation</span>
+              <div class="pills">
+                <span class="pill">Fintech</span><span class="pill">Neobanking</span>
+                <span class="pill">Feature Proposal</span><span class="pill">User Segmentation</span>
               </div>
-              <span class="featured-cta">
+              <span class="cta-link">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                 Read teardown
               </span>
@@ -455,160 +485,96 @@
           </div>
         </a>
 
-        <a href="scf-analysis.html" class="featured-card" id="featured-scf" style="display:none">
+        <a href="scf-analysis.html" class="featured-card fade-in" id="featured-scf" style="display:none">
           <div class="featured-label">Featured project</div>
           <div class="featured-inner">
             <div>
               <div class="featured-title">What Consumer Financial Data Tells Us About <em>Unmet Needs</em></div>
+              <div class="featured-pov">"I wanted to see what the Federal Reserve's data actually says about who gets left out — and whether the fintech products targeting them are solving the right problems."</div>
               <div class="featured-desc">A PM-lens analysis of the Federal Reserve's 2022 Survey of Consumer Finances — examining where user pain is highest, product coverage is lowest, and the market is large enough to matter.</div>
-              <div class="featured-pills">
-                <span class="pill">Fintech</span>
-                <span class="pill">Data Analysis</span>
-                <span class="pill">Product Opportunity</span>
-                <span class="pill">Fed SCF 2022</span>
+              <div class="pills">
+                <span class="pill">Fintech</span><span class="pill">Data Analysis</span>
+                <span class="pill">Product Opportunity</span><span class="pill">Fed SCF 2022</span>
               </div>
-              <span class="featured-cta">
+              <span class="cta-link">
                 <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
                 View analysis
               </span>
             </div>
             <div class="featured-stat-col">
               <div class="stat-box"><span class="stat-val">4,600</span><span class="stat-lbl">households in dataset</span></div>
-              <div class="stat-box"><span class="stat-val">56%</span><span class="stat-lbl">households under-saved</span></div>
+              <div class="stat-box"><span class="stat-val">56%</span><span class="stat-lbl">under-saved</span></div>
               <div class="stat-box"><span class="stat-val">3</span><span class="stat-lbl">prioritized opportunities</span></div>
             </div>
           </div>
         </a>
 
-        <a href="big-red-happenings.html" class="featured-card" id="featured-brh">
-          <div class="featured-label">Featured project</div>
-          <div class="featured-inner">
-            <div>
-              <div class="featured-title">Big Red Happenings — <em>Campus Event Discovery</em> for Cornell Students</div>
-              <div class="featured-desc">A mobile-first React web app for discovering Cornell club events. Deployed on Vercel with a color-coded event feed, category filters, RSVP + Google Cal integration, and a club rep submission form.</div>
-              <div class="featured-pills">
-                <span class="pill-live">Live</span>
-                <span class="pill">React</span>
-                <span class="pill">Vercel</span>
-                <span class="pill">Mobile-first</span>
-                <span class="pill">Supabase (in progress)</span>
-              </div>
-              <span class="featured-cta">
-                <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                View live app
-              </span>
-            </div>
-            <div class="featured-stat-col">
-              <div class="stat-box"><span class="stat-val">3</span><span class="stat-lbl">fully functional screens</span></div>
-              <div class="stat-box"><span class="stat-val">Live</span><span class="stat-lbl">deployed on Vercel</span></div>
-              <div class="stat-box"><span class="stat-val">React</span><span class="stat-lbl">+ Supabase (WIP)</span></div>
-            </div>
-          </div>
-        </a>
-
-        <!-- GRID -->
-        <div class="work-grid">
-          <a href="duolingo.html" class="work-card" data-tags="fintech consumer-ai">
-            <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            <div class="work-type">Product Teardown</div>
-            <div class="work-title">Duolingo: The Retention Machine That Forgot About Learning</div>
-            <div class="work-desc">Engagement mechanics, the activity vs. outcomes gap, and a proposal for Duolingo Missions.</div>
-            <div class="work-pills"><span class="pill">Consumer</span><span class="pill">EdTech</span><span class="pill">AI in Product</span></div>
-            <span class="work-link">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Read teardown
-            </span>
-          </a>
-
-        <div class="work-card">
-          <div class="work-card-top">
-            <div class="work-type">PRD Writing</div>
-            <div class="work-title">YouTube Collections</div>
-            <div class="work-desc">A product requirements document for a folder-based video organization system — addressing Watch Later's core scaling failure and scoping a v1 that solves the problem without AI or social infrastructure.</div>
-            <div class="work-pills">
-              <span class="work-pill">YouTube</span>
-              <span class="work-pill">Consumer</span>
-              <span class="work-pill">Jobs to Be Done</span>
-              <span class="work-pill">MoSCoW</span>
-            </div>
-          </div>
-          <div class="work-links">
-            <a class="work-link" href="youtube_prd.html">Read PRD <span class="work-arrow">→</span></a>
-          </div>
-        </div>
-
-          <a href="scf-analysis.html" class="work-card" data-tags="fintech">
-            <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            <div class="work-type">Data Analysis · PM Lens</div>
-            <div class="work-title">What Consumer Financial Data Tells Us About Unmet Needs</div>
-            <div class="work-desc">Fed SCF 2022 analyzed through a PM lens to surface 3 prioritized product opportunities.</div>
-            <div class="work-pills"><span class="pill">Fintech</span><span class="pill">Data Analysis</span><span class="pill">Fed SCF</span></div>
-            <span class="work-link">
-              <svg class="icon" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-              View analysis
-            </span>
-          </a>
-
-          <a href="big-red-happenings.html" class="work-card" data-tags="built">
-            <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-            <div class="work-type">Product Build · Live App</div>
-            <div class="work-title">Big Red Happenings — Campus Event Discovery</div>
-            <div class="work-desc">Mobile-first React app for Cornell students to discover club events. Live on Vercel.</div>
-            <div class="work-pills"><span class="pill-live">Live</span><span class="pill">React</span><span class="pill">Vercel</span></div>
-            <span class="work-link">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              View live app
-            </span>
-          </a>
-
+        <div class="work-grid fade-in" id="work-grid">
           <a href="chime.html" class="work-card" data-tags="fintech consumer-ai">
             <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
             <div class="work-type">Product Teardown</div>
             <div class="work-title">Chime: Banking for People Traditional Banks Left Behind</div>
-            <div class="work-desc">Product strategy deep-dive with a feature proposal for Chime Coach, an AI-powered financial guide.</div>
-            <div class="work-pills"><span class="pill">Fintech</span><span class="pill">Neobanking</span><span class="pill">Feature Proposal</span></div>
-            <span class="work-link">
-              <svg class="icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              Read teardown
-            </span>
+            <div class="work-pov">"I wanted to understand how a product with no premium features still commands fierce user loyalty."</div>
+            <div class="pills"><span class="pill">Fintech</span><span class="pill">Neobanking</span><span class="pill">Feature Proposal</span></div>
+          </a>
+          <a href="duolingo.html" class="work-card" data-tags="fintech consumer-ai">
+            <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            <div class="work-type">Product Teardown</div>
+            <div class="work-title">Duolingo: The Retention Machine That Forgot About Learning</div>
+            <div class="work-pov">"I wanted to figure out why a product this good at getting you to open it is so bad at actually teaching you anything."</div>
+            <div class="pills"><span class="pill">Consumer</span><span class="pill">EdTech</span><span class="pill">AI in Product</span></div>
+          </a>
+          <a href="scf-analysis.html" class="work-card" data-tags="fintech">
+            <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            <div class="work-type">Data Analysis · PM Lens</div>
+            <div class="work-title">What Consumer Financial Data Tells Us About Unmet Needs</div>
+            <div class="work-pov">"I wanted to see what the Fed's data says about who gets left out — and whether fintech is solving the right problems."</div>
+            <div class="pills"><span class="pill">Fintech</span><span class="pill">Data Analysis</span><span class="pill">Fed SCF</span></div>
+          </a>
+          <a href="big-red-happenings.html" class="work-card" data-tags="built">
+            <svg class="icon work-arrow" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            <div class="work-type">Product Build · Live App</div>
+            <div class="work-title">Big Red Happenings — Campus Event Discovery</div>
+            <div class="work-pov">"I built this after missing Boris Johnson speak at Cornell because I never knew he was coming."</div>
+            <div class="pills"><span class="pill-live">Live</span><span class="pill">React</span><span class="pill">Vercel</span></div>
           </a>
         </div>
       </section>
 
       <!-- EXPERIENCE -->
       <section class="section" id="experience">
-        <div class="section-header">
+        <div class="section-header fade-in">
           <h2 class="section-title">Experience</h2>
           <div class="section-line"></div>
         </div>
 
-        <div class="exp-item">
+        <div class="exp-item fade-in">
           <div class="exp-date">Feb 2026 – Aug 2027</div>
           <div>
             <div class="exp-role">Laidlaw Scholar</div>
             <div class="exp-org">Laidlaw Leadership and Research Program</div>
             <ul class="exp-bullets">
               <li>Admitted to a globally selective cohort (&lt;1% acceptance), collaborating with scholars from the University of Oxford</li>
-              <li>Conducting funded summer research abroad in South America or Europe, focused on sustainable and humanitarian impact</li>
+              <li>Conducting funded summer research in Japan, focused on sustainable and humanitarian impact</li>
               <li>Advancing interdisciplinary research under Cornell faculty addressing sustainable and humanitarian challenges</li>
             </ul>
           </div>
         </div>
 
-        <div class="exp-item">
+        <div class="exp-item fade-in">
           <div class="exp-date">Jul – Aug 2025</div>
           <div>
             <div class="exp-role">Research & Analysis Intern</div>
             <div class="exp-org">CSMore Program, Cornell University</div>
             <ul class="exp-bullets">
               <li>Led a research initiative optimizing large-scale text indexing systems, improving processing efficiency by 25% through redesigned algorithm prioritization</li>
-              <li>Evaluated scalability tradeoffs across multiple data architectures to develop structured recommendations for long-term system optimization</li>
+              <li>Evaluated scalability tradeoffs across multiple data architectures to develop structured long-term system recommendations</li>
               <li>Presented findings to 50+ students and faculty, translating complex technical insights into clear product-level implications</li>
             </ul>
           </div>
         </div>
 
-        <div class="exp-item">
+        <div class="exp-item fade-in">
           <div class="exp-date">May – Jul 2025</div>
           <div>
             <div class="exp-role">Product Strategy & Growth Intern</div>
@@ -621,7 +587,7 @@
           </div>
         </div>
 
-        <div class="exp-item">
+        <div class="exp-item fade-in">
           <div class="exp-date">Sep 2025 – Present</div>
           <div>
             <div class="exp-role">VP of Professional Development</div>
@@ -633,7 +599,7 @@
           </div>
         </div>
 
-        <div class="exp-item">
+        <div class="exp-item fade-in">
           <div class="exp-date">Sep 2025 – Present</div>
           <div>
             <div class="exp-role">Sales and Trading Analyst</div>
@@ -645,7 +611,7 @@
           </div>
         </div>
 
-        <div class="exp-item">
+        <div class="exp-item fade-in">
           <div class="exp-date">Jan 2025 – Present</div>
           <div>
             <div class="exp-role">Product Engineering Sub-team Member</div>
@@ -660,11 +626,11 @@
 
       <!-- ABOUT -->
       <section class="section" id="about">
-        <div class="section-header">
+        <div class="section-header fade-in">
           <h2 class="section-title">About</h2>
           <div class="section-line"></div>
         </div>
-        <div class="about-grid">
+        <div class="about-grid fade-in">
           <div class="about-card">
             <div class="about-card-label">Education</div>
             <div class="about-card-content">
@@ -675,7 +641,7 @@
           <div class="about-card">
             <div class="about-card-label">Targeting</div>
             <div class="about-card-content">
-              <strong>PM roles in Consumer, Fintech & AI</strong>
+              <strong>APM roles in Fintech & AI</strong>
               Interested in products that reach underserved users or leverage AI to close real experience gaps.
             </div>
           </div>
@@ -688,7 +654,7 @@
           <div class="about-card">
             <div class="about-card-label">Outside work</div>
             <div class="about-card-content">
-              National Table Tennis Player · Rock Climbing · Cricket · Aviation Club · Hackathon Finalist (Deloitte & Hilton)
+              I've played table tennis since I was 7 and competed all the way to nationals in India. It's the thing that taught me consistency beats intensity — a lesson I carry into everything else.
             </div>
           </div>
         </div>
@@ -696,13 +662,13 @@
 
       <!-- CONTACT -->
       <section class="section" id="contact">
-        <div class="section-header">
+        <div class="section-header fade-in">
           <h2 class="section-title">Get in touch</h2>
           <div class="section-line"></div>
         </div>
-        <div class="contact-grid">
+        <div class="contact-grid fade-in">
           <div>
-            <p class="contact-intro">Whether you're a recruiter, a fellow PM, or just want to talk product — I'd love to hear from you. Fill out the form or reach me directly.</p>
+            <p class="contact-intro">Whether you're a recruiter, a fellow PM, or just want to talk product — I'd love to hear from you.</p>
             <div class="contact-links">
               <a href="mailto:bd447@cornell.edu" class="contact-btn">
                 <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -718,9 +684,8 @@
               </a>
             </div>
           </div>
-
           <div>
-            <form class="contact-form" action="https://formspree.io/f/xwvzjeao" method="POST" id="contact-form">
+            <form class="contact-form" id="contact-form" action="https://formspree.io/f/xwvzjeao" method="POST">
               <div class="form-group">
                 <label class="form-label" for="name">Name</label>
                 <input class="form-input" type="text" id="name" name="name" placeholder="Your name" required />
@@ -738,7 +703,7 @@
                 Send message
               </button>
               <div class="form-success" id="form-success">
-                <svg class="icon" viewBox="0 0 24 24" style="stroke:#2D6A4F"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg class="icon" viewBox="0 0 24 24" style="stroke:#5AA87A"><polyline points="20 6 9 17 4 12"/></svg>
                 Thanks! I'll get back to you soon.
               </div>
             </form>
@@ -752,31 +717,71 @@
   <footer>
     <div class="footer-inner">
       <span>Bhavya Diwakar · Portfolio</span>
-      <span>Updated May 2026</span>
+      <span>Updated June 2026</span>
     </div>
   </footer>
 
   <script>
-    const featuredMap = {
-      all: 'featured-brh',
-      fintech: 'featured-scf',
-      'consumer-ai': 'featured-chime',
-      built: 'featured-brh'
-    };
-    const countMap = {
-      all: '4 projects',
-      fintech: '3 projects in Fintech',
-      'consumer-ai': '2 projects in Consumer & AI',
-      built: '1 built product'
-    };
+    /* CUSTOM CURSOR */
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    document.querySelectorAll('a, button, .filter-btn, .work-card, .featured-card, .about-card, .contact-btn').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); ring.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
+    });
+
+    /* HERO HEADLINE WORD REVEAL */
+    const headline = document.getElementById('hero-headline');
+    const text = 'I build things and <em>think deeply</em> about why they work';
+    const words = ['I', 'build', 'things', 'and', '<em>think', 'deeply</em>', 'about', 'why', 'they', 'work'];
+    headline.innerHTML = words.map(w => `<span class="word">${w}</span>`).join(' ');
+
+    setTimeout(() => {
+      document.querySelectorAll('.hero-headline .word').forEach((w, i) => {
+        setTimeout(() => w.classList.add('show'), i * 80);
+      });
+    }, 200);
+
+    /* SCROLL FADE-IN */
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    /* Trigger hero fade-ins immediately */
+    setTimeout(() => {
+      document.querySelectorAll('.hero .fade-in').forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), 600 + i * 120);
+      });
+    }, 100);
+
+    /* FILTER */
+    const featuredMap = { all: 'featured-brh', fintech: 'featured-chime', 'consumer-ai': 'featured-chime', built: 'featured-brh' };
+    const countMap = { all: '4 projects', fintech: '3 projects in Fintech', 'consumer-ai': '2 projects in Consumer & AI', built: '1 built product' };
 
     function filterWork(domain, btn) {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       document.getElementById('count-line').textContent = countMap[domain];
-      ['featured-chime','featured-scf','featured-brh'].forEach(id => {
-        document.getElementById(id).style.display = 'none';
-      });
+      ['featured-brh','featured-chime','featured-scf'].forEach(id => document.getElementById(id).style.display = 'none');
       document.getElementById(featuredMap[domain]).style.display = 'block';
       document.querySelectorAll('.work-card').forEach(card => {
         const tags = card.dataset.tags ? card.dataset.tags.split(' ') : [];
@@ -784,31 +789,20 @@
       });
     }
 
+    /* CONTACT FORM */
     const form = document.getElementById('contact-form');
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
-      btn.disabled = true;
-      btn.textContent = 'Sending...';
+      btn.disabled = true; btn.textContent = 'Sending...';
       try {
-        const res = await fetch(form.action, {
-          method: 'POST',
-          body: new FormData(form),
-          headers: { 'Accept': 'application/json' }
-        });
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
         if (res.ok) {
           form.reset();
-          const success = document.getElementById('form-success');
-          success.style.display = 'flex';
+          document.getElementById('form-success').style.display = 'flex';
           btn.style.display = 'none';
-        } else {
-          btn.disabled = false;
-          btn.innerHTML = 'Try again';
-        }
-      } catch {
-        btn.disabled = false;
-        btn.innerHTML = 'Try again';
-      }
+        } else { btn.disabled = false; btn.textContent = 'Try again'; }
+      } catch { btn.disabled = false; btn.textContent = 'Try again'; }
     });
   </script>
 
