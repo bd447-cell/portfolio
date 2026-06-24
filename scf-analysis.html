@@ -75,9 +75,31 @@
     .btn-secondary { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; background: transparent; color: var(--ink-soft); border: 1px solid var(--border-mid); border-radius: 6px; padding: 10px 20px; display: inline-flex; align-items: center; gap: 6px; transition: border-color 0.15s, color 0.15s; }
     .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
     @media (max-width: 620px) { .insight-grid { grid-template-columns: 1fr; } .stat-row { grid-template-columns: 1fr 1fr; } .bar-label { width: 100px; font-size: 11px; } }
+  
+    /* CUSTOM CURSOR */
+    body { cursor: none; }
+    .cursor {
+      position: fixed; width: 10px; height: 10px;
+      background: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s ease, height 0.2s ease;
+    }
+    .cursor-ring {
+      position: fixed; width: 36px; height: 36px;
+      border: 1px solid rgba(196,133,106,0.4); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+    }
+    .cursor.hovering { width: 16px; height: 16px; }
+    .cursor-ring.hovering { width: 48px; height: 48px; border-color: rgba(196,133,106,0.7); }
+    @media (max-width: 620px) { body { cursor: auto; } .cursor, .cursor-ring { display: none; } }
   </style>
 </head>
 <body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursor-ring"></div>
 
 <!-- NAV -->
 <nav>
@@ -501,5 +523,24 @@ new Chart(document.getElementById('chart4'), {
   }
 });
 </script>
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    });
+    function animateRing() {
+      rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cursor.classList.add('hovering'); ring.classList.add('hovering'); });
+      el.addEventListener('mouseleave', () => { cursor.classList.remove('hovering'); ring.classList.remove('hovering'); });
+    });
+  </script>
 </body>
 </html>
